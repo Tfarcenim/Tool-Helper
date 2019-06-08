@@ -2,33 +2,24 @@ package com.tfar.examplemod;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTool;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.common.config.Config;
+import net.minecraftforge.common.ToolType;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import org.apache.logging.log4j.Logger;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 @Mod.EventBusSubscriber
-@Config(modid = ToolHelper.MODID)
-@Mod(modid = ToolHelper.MODID, name = ToolHelper.NAME, version = ToolHelper.VERSION, clientSideOnly = true)
+@Mod(value = ToolHelper.MODID)
 public class ToolHelper {
 
-  @Config.Name("show enchantability")
-  public static boolean showEnchantability = false;
-
-  @Config.Ignore
   public static final String MODID = "toolhelper";
-  @Config.Ignore
-  public static final String NAME = "Tool Helper";
-  @Config.Ignore
-  public static final String VERSION = "1.0";
-  @Config.Ignore
+
   public static final List<ToolData> intToString = new ArrayList<>();
 
   static {
@@ -41,19 +32,20 @@ public class ToolHelper {
 
   @SubscribeEvent
   public static void addTooltips(ItemTooltipEvent e) {
-    List<String> tooltips = e.getToolTip();
+    List<ITextComponent> tooltips = e.getToolTip();
     ItemStack stack = e.getItemStack();
     if (stack.getItem() instanceof ItemTool) {
-      Set<String> toolclasses = stack.getItem().getToolClasses(stack);
+      Set<ToolType> toolclasses = stack.getItem().getToolTypes(stack);
       if (!toolclasses.isEmpty()) {
-        int harvestLevel = stack.getItem().getHarvestLevel(stack, "pickaxe", null, null);
+        int harvestLevel = stack.getItem().getHarvestLevel(stack, ToolType.PICKAXE, null, null);
         harvestLevel = Math.min(harvestLevel, intToString.size() - 1);
-        if (harvestLevel >= 0 && harvestLevel < 5) tooltips.add("Harvest level: " + intToString.get(harvestLevel).color + intToString.get(harvestLevel).harvest_level);
-        else if(harvestLevel >= 5) tooltips.add("Harvest level: " + TextFormatting.GOLD + harvestLevel);
-        if (showEnchantability) tooltips.add("Enchantability: " + stack.getItem().getItemEnchantability());
+        if (harvestLevel >= 0 && harvestLevel < 5) tooltips.add(new TextComponentString("Harvest level: " + intToString.get(harvestLevel).color + intToString.get(harvestLevel).harvest_level));
+        else if(harvestLevel >= 5) tooltips.add(new TextComponentString(
+        "Harvest level: " + TextFormatting.GOLD + harvestLevel));
       }
     }
   }
+
   public static class ToolData {
     public TextFormatting color;
     public String harvest_level;
