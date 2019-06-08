@@ -1,0 +1,15 @@
+[
+{
+  "modid": "toolhelper",
+  "name": "Tool Helper",
+  "description": "Gives tool harvest level and tooltip info",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Tfarecmin"],
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
